@@ -132,7 +132,7 @@ hw4/
 ├── .gitignore               keeps the data pack and real secrets out of git
 ├── README.md                this file
 │
-├── backend/
+├── backend/                 the server needs all seven .py files below
 │   ├── main.py              FastAPI app: routes, auth endpoints, chat endpoint
 │   ├── agent.py             the PydanticAI agent, its model and its loop limits
 │   ├── tools.py             the four tools, plus catalogue and inventory access
@@ -141,9 +141,12 @@ hw4/
 │   ├── audit.py             append-only log of agent activity
 │   ├── auth.py              password hashing and session tokens
 │   ├── env_file.py          finds the .env wherever the project is cloned
-│   ├── dev.ps1              a reloader that works
-│   └── whiten_images.py     the product photo pipeline (and derive_colors.py,
-│                            remove_person.py) — how the images were prepared
+│   │
+│   ├── dev.ps1              optional: a reloader that works
+│   ├── whiten_images.py     the image pipeline — how the product photos were
+│   ├── derive_colors.py     prepared. Not imported by the server, and they read
+│   └── remove_person.py     the originals from data.zip, so they are a record of
+│                            method rather than something to run from a clone.
 │
 ├── frontend/src/
 │   ├── pages/               Home, Products, ProductDetail, About, auth pages
@@ -161,6 +164,12 @@ hw4/
 
 **The agent itself is four files:** `backend/prompts/prompt.md`,
 `backend/agent.py`, `backend/tools.py`, `backend/models.py`.
+
+The three beside them are there because the assignment asks for what they do:
+`auth.py` holds the password hashing and session tokens from Problem 4,
+`audit.py` writes the append-only trail from Problem 12, and `env_file.py`
+locates the `.env` so a clone is self-contained. The server imports all three,
+so it will not start without them.
 
 **Start with `output/harness.md`.** Its last section, *How the system works*, is
 a single description of the finished build: how to run it, the model, every

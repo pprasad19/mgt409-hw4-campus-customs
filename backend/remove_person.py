@@ -1,5 +1,15 @@
 """Turn the one worn product photo into a flat garment shot.
 
+NOT CURRENTLY IN USE. The shop decided the photograph is better with the model
+in it, so this script's output was switched off rather than deleted: it now sits
+in data/products_edited/disabled/, where whiten_images.py does not look. Moving
+that file back up one level turns the flat version on again. Nothing else in the
+project imports this module, and the site runs without it.
+
+It is kept because the catalogue still contains the worn photograph and this
+records how the alternative was produced, which output/design.md and
+output/harness.md both refer to.
+
 Every photograph in the catalogue shows the garment on its own except
 the-forest-school-hoodie, which shows someone wearing it: face and neck inside
 the hood opening, a white t-shirt at the collar, and jeans below the hem. On a
