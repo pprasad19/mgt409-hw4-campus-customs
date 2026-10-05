@@ -1861,3 +1861,69 @@ the 24 from genuine agent runs. Append-only is a property of the code - nothing
 in the program ever truncates or rewrites the file - and that is not in tension
 with clearing out throwaway test rows before handing the work in, the same way
 the database was restored to its seed state after earlier testing.
+
+---
+
+# Packaging and publishing
+
+`hw4/` is the submitted package: the repository root, pushed to
+<https://github.com/pprasad19/mgt409-hw4-campus-customs>.
+
+## What is and is not in git
+
+| Kept out | Why |
+| --- | --- |
+| `.env` | Holds the real Portkey key and the session secret. `.env.example` is committed in its place, placeholders only. |
+| `data/` | `campus_customs.db` and the 102 product photographs. Supplied as a separate data pack. |
+| `data.zip` | The pristine original photographs, used by the image pipeline. |
+| `node_modules/`, `dist/`, `.venv/`, `__pycache__/` | Reinstallable, and large. |
+
+`.gitignore` ignores all of `data/` rather than naming the two paths inside it,
+so a stray file dropped in there cannot be committed by accident.
+
+## Three things that had to be fixed to make the package work
+
+Packaging is not just copying, and moving the project root exposed three faults
+that were invisible while everything sat in one folder.
+
+**The .env was looked for outside the project.** `agent.py` loaded
+`PROJECT_DIR.parent / ".env"` - correct on the machine this was written on,
+where one shared `.env` sits in the class folder beside the other homeworks. In
+a clone that path points outside the repository entirely, so a grader following
+the README and creating `hw4/.env` would have had it ignored. Loading now tries
+the project root first and the parent second, so a clone is self-contained and
+the original layout still works.
+
+**The session secret depended on import order.** `auth.py` read
+`CAMPUS_CUSTOMS_SECRET` from the environment at import time, and only ever saw
+it because `main.py` happens to import `agent` - which loaded the `.env` - one
+line earlier. Importing `auth` on its own fell back to a freshly generated key,
+which silently means every session token stops working on restart even though
+the variable was set. Both modules now call `load_env()` from `env_file.py`
+rather than relying on who imported what.
+
+**requirements.txt was missing most of the dependencies.** It listed `fastapi`
+and `uvicorn[standard]` and nothing else. A grader installing from it would have
+had no `pydantic-ai`, no `python-dotenv` and no `pillow` - so the agent, the
+`.env` and the image scripts would all have failed. It now pins the five direct
+dependencies at the versions this was built against, and installing from it into
+a fresh virtual environment was confirmed to work.
+
+## Verified by cloning it
+
+The published repository was cloned to a clean directory and checked as a
+grader would see it:
+
+- 64 files, 2.5 MB. No `.env`, no `data/`, no `data.zip`, no `node_modules`,
+  no `.venv`.
+- Every required item present: `AI_prompts.md`, `requirements.txt`,
+  `.env.example`, `.gitignore`, `README.md`, the four agent files under
+  `backend/`, and all six items in `output/` including the three screenshots.
+- Scanned for leaks before the first commit: no API key, no personal email, no
+  tokens, no private keys, no local machine paths in any staged file.
+- Then run from the clone by following the README exactly - place the data pack,
+  copy `.env.example` to `.env`, start the backend from `backend/`. It reported
+  `{"products":102,"agent_configured":true,"model":"gpt-6-luna"}`, answered
+  *"Is the Yale Dad Crewneck in stock in L?"* correctly, appended to its audit
+  trail, and returned 25 products for `navy hoodie`, all of them hoodies.
+- The test clone was deleted afterwards, because a real key had been put in it.
