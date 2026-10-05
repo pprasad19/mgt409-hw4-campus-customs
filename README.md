@@ -137,7 +137,8 @@ hw4/
 │   ├── agent.py             the PydanticAI agent, its model and its loop limits
 │   ├── tools.py             the four tools, plus catalogue and inventory access
 │   ├── models.py            every Pydantic model, for tools and for the API
-│   ├── prompts/prompt.md    the system prompt and 25 safety rules
+│   ├── prompts/
+│   │   └── prompt.md        the system prompt and 25 safety rules
 │   ├── audit.py             append-only log of agent activity
 │   ├── auth.py              password hashing and session tokens
 │   ├── env_file.py          finds the .env wherever the project is cloned
