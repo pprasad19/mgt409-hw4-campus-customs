@@ -160,3 +160,22 @@ navy that vanished in dark mode, no visible focus outline on dark form fields, a
 flash of the light page on every load, and a 375px phone that could be dragged
 sideways. A shopper who cannot read the price or stop the page sliding under
 their thumb does not buy. Measurements in `harness.md`.
+
+## Leftovers from the Vite template
+
+Three things were still the scaffolding the project was generated from, which is
+the opposite of what this problem asks for:
+
+- **The browser tab showed the Vite logo.** `public/favicon.svg` was still the
+  default — a purple lightning bolt (`#863bff`) on a Yale apparel shop, visible
+  on every tab and bookmark. It is now the same navy badge and CC monogram as
+  the brand mark in the nav, with the brass rule under it.
+- **`frontend/README.md` was the React + Vite template text**, opening "This
+  template provides a minimal setup to get React working in Vite". Replaced
+  with what the folder actually holds and a pointer to the project README.
+- **Three unused template assets** — `react.svg`, `vite.svg` and `hero.png` —
+  referenced by nothing. Removed, along with the empty folder.
+
+The favicon is the one that mattered: a tab icon is the smallest piece of
+branding a shop has, and leaving the framework's logo there undoes the point of
+every other change on this page.

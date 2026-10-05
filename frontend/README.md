@@ -1,32 +1,36 @@
-# React + TypeScript + Vite
+# Campus Customs — frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The storefront: React 19 + Vite 8 + TypeScript, talking to the FastAPI backend
+on port 8000.
 
-Currently, two official plugins are available:
+**Setup and run instructions are in the [project README](../README.md).** The
+data pack has to be in place and the backend running before this is useful, so
+start there rather than here.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev        # http://localhost:5173
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Node 20.19 or newer (or 22.12+), which `package.json` declares in `engines`.
+
+`/api` and `/static` are proxied to `http://127.0.0.1:8000` by `vite.config.ts`,
+so only port 5173 needs to be open in a browser and the image paths stored in
+the database work unchanged.
+
+## Where things are
+
+| | |
+| --- | --- |
+| `src/pages/` | Home, Products, ProductDetail, About, LogIn, CreateAccount, NotFound |
+| `src/components/` | chat widget, chat results band, product cards, colour swatches, command palette, nav bar, theme toggle, ticker |
+| `src/auth/` | auth context and hook — session token, current user |
+| `src/chat/` | context for the product cards the agent returns |
+| `src/colors.ts` | all 22 catalogue colour names mapped to hex |
+| `src/index.css` | the whole design system, light and dark |
+
+`npm run lint` reports a handful of React advisory warnings and exits clean;
+`npm run build` runs `tsc -b` first, so a type error fails the build.
+
+The design decisions behind all of this are in
+[`output/design.md`](../output/design.md).
