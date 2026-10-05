@@ -222,7 +222,7 @@ was worth it: the first answer I got said the tool logging had been checked, and
 when Claude went to actually prove it, the test it had relied on turned out to
 pass without testing anything.
 
-## Problem 13
+## Problem 13 - Push to GitHub and submit the URL
 
 ### Initial Prompts
 
