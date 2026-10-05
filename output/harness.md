@@ -1404,6 +1404,14 @@ proves they agree rather than asking the grader to take the agent's word.
 
 ### Verified
 
+- **Opened from the file system, not just from a server.** The page is meant to
+  work by double-clicking it, and for a while that was the one claim resting on
+  reasoning rather than evidence: a browser will not follow a `file://` link
+  from an `http://` page, so it could not be checked the way everything else
+  was. Chrome in headless mode will, though, and rendering the file directly
+  from its `file:///...` path produced the whole page with all three
+  screenshots visible and no broken images. Reasoning about why it should work
+  is not the same as watching it work.
 - All three images load from their relative paths; none has a missing file.
 - Every `<img>` carries alt text, tags balance, and no absolute or `file://`
   paths leaked into the markup.

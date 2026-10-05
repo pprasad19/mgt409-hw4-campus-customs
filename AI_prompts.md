@@ -42,13 +42,13 @@ Now we will be going to Problem 4. The goal of this problem is to build a normal
 
 do this recommendation: sliding expiry — keep a short TTL but reissue the token on each authenticated request, so the clock resets while someone is active and only runs out after they go idle. You get most of the security benefit without the mid-checkout logout. It's maybe ten lines: have /api/auth/me and the other authenticated endpoints return a refreshed token, and have the frontend store it.
 
-*Why I asked for this:* The site kept you logged in for 12 hours no matter what, so if you signed in on a library computer and walked away, the next person could still use your account for the rest of the day. I wanted the site to log you out soon after you stop using it, but not kick you out while you are still shopping.
+*Why I asked for this:* The first version kept you signed in for a fixed twelve hours no matter what, so signing in on a library computer left my account open to the next person all day.
 
 **Follow-up 2** *(Claude's suggestion, quoted back to approve it)*
 
 do this recommendation: an absolute cap — put an iat (issued-at) claim in the token and refuse to renew past 12 hours from the original login regardless of activity, so the short idle timeout stays but there is a hard ceiling again.
 
-*Why I asked for this:* After the first change, the site pushed your logout time back every time you clicked something, and there was no limit on that. So if someone stole your login, they could keep it working forever just by clicking once in a while. I wanted a firm cutoff so every login ends 12 hours after you signed in, no matter what.
+*Why I asked for this:* After the first change there was no limit on how far the clock could be pushed back, so a stolen login could be kept alive indefinitely with an occasional click.
 
 ## Problem 5 - Pydantic AI agent backend
 
@@ -62,13 +62,13 @@ Great, now we will go to Problem 5. The shop chatbot should be built as a Pydant
 
 how to fix the unreliability of the reloader in the onedrive folder
 
-*Why I asked for this:* When Claude finished Problem 5 it told me the server had been serving old code several times during the build and had to be restarted by hand each time. That meant I could not be sure a change I saved was the one being tested, so I asked how to fix it rather than live with it. Claude's first explanation, that the OneDrive folder was hiding my saved changes from the server, turned out to be wrong. The server does notice every save; what fails is the restart afterwards, which stops the old version halfway and never finishes starting the new one, so the old code keeps answering. That mattered, because the usual cure for folders that sync to the cloud does nothing here - it was tried and made no difference.
+*Why I asked for this:* Claude told me the server had been serving old code during the build and needed restarting by hand, which meant I could not trust that what I was testing was what I had saved.
 
 **Follow-up 2** *(Claude's suggestion, quoted back to approve it)*
 
 do this: The one thing I'd call genuinely worth doing is small and isn't a code change: make the reliable command easy to run, so you don't have to remember a long line with a venv path in it. Either a one-line backend/dev.ps1 you double-click, or a campus-customs-backend-dev entry in the project's launch config. Two minutes, zero risk, and your edits start applying automatically again.
 
-*Why I asked for this:* The command that actually worked was long and easy to mistype, so in practice I would have forgotten it and gone back to the broken one. Putting it in a small script I can double-click makes the reliable way just as easy as the unreliable way, without changing any of the real code.
+*Why I asked for this:* The command that actually worked was long and easy to mistype, so in practice I would have drifted back to the broken one.
 
 ## Problem 6 - Tools: product info and stock
 
@@ -84,7 +84,7 @@ how to make sure this failure does not happen again
 
 *The failure: while testing the new lookup tools, one of the test questions died partway through because the server restarted in the middle of answering it, and the connection was cut before any reply came back.*
 
-*Why I asked for this:* Claude told me this was a stray restart rather than a real bug in the shop, but a server that can drop a request at any moment makes every test result questionable, so I wanted it dealt with instead of accepted. It turned out the server was being restarted whenever any file changed, including the wording file for the chatbot, and OneDrive quietly re-saves files about half a minute after I do - which is what triggered it. The server now only restarts when actual program files change. No part of the shop's code was touched; the change was to the small script that starts the server.
+*Why I asked for this:* A request had been dropped in the middle of a test, and a server that can do that at any moment makes every later result questionable.
 
 ## Problem 7 - Chat search that updates the page
 
@@ -98,13 +98,13 @@ Now we will be going to Problem 7. The purpose of this problem is to add a neat 
 
 so no issues that need to be resolved for this problem?
 
-*Why I asked for this:* Claude said the feature was finished and working, but it had only tried the obvious question. I wanted it to go looking for problems before I accepted that. It found two. The list of products the chatbot found was being added to the top of the page, so if I had scrolled down at all, the results I just asked for appeared somewhere off the screen where I would never see them. And when the chatbot said something like "we have 27 hoodies, here are eight," there was no way to get to the other nineteen.
+*Why I asked for this:* Claude said the feature was finished but had only tried the obvious question, so I wanted it to go looking for problems before I accepted that.
 
 **Follow-up 2**
 
 so now no more bugs for this question?
 
-*Why I asked for this:* The fixes from the first round introduced a new problem of their own, which is exactly why I kept asking. The "See all 27" button was built from the words the chatbot used as a heading rather than the words it actually searched for, so a heading like "Yale tailgate gear" sent shoppers to a page with nothing on it. Asking again also turned up that the same product could appear twice in the list of results.
+*Why I asked for this:* The first round of fixes introduced a new fault of its own, which showed that one pass of checking was not enough.
 
 ## Problem 8 - Customer memory
 
@@ -118,13 +118,13 @@ Now we will be going to Problem 8. When a shopper is logged in, their chat histo
 
 can you check for bugs in this problem
 
-*Why I asked for this:* This problem added the two things most likely to go wrong quietly: saving people's conversations, and telling the chatbot who it is talking to. Asking turned up a security hole. The web address of the page the shopper was on was being handed to the chatbot word for word, so a booby-trapped link could smuggle in its own orders - a link was able to make the assistant end every answer with a word of the attacker's choosing. It now only gets told which kind of page someone is on, chosen from a short fixed list, so a link cannot put words in its mouth.
+*Why I asked for this:* This problem added the two things most likely to go wrong quietly - saving people's conversations, and telling the chatbot who it is talking to - so I wanted them checked rather than assumed.
 
 **Follow-up 2**
 
 so now no more bugs?
 
-*Why I asked for this:* Asking a second time found a smaller gap. When the chatbot refused a question, that exchange was not being saved, so the shopper's question quietly disappeared from their saved conversation while the messages on either side of it stayed. Saved conversations should be a complete record, not one with holes in it.
+*Why I asked for this:* The first round had fixed the serious fault but not the small one: a refused question was quietly vanishing from the saved conversation while the messages either side of it stayed.
 
 ## Problem 9 - Usability Improvements
 
@@ -138,7 +138,7 @@ Now we will be going to Problem 9. Since the core shop now works, we will focus 
 
 can you check for bugs in this problem
 
-*Why I asked for this:* The new size filter was the part most likely to go wrong quietly, because it decides what a shopper sees and a mistake just looks like an empty shop rather than an error. Asking turned one up. The filter has an "Any" button meaning "do not filter", and clicking it worked, but the shop had not been taught that "Any" is not a real size. So anyone opening a shared or typed-out link with that setting in it saw a catalogue with nothing in it at all. It now treats "Any" as no filter, and real sizes still work.
+*Why I asked for this:* The new size filter decides what a shopper sees, and a mistake in it looks like an empty shop rather than an error, so it needed checking before I trusted it.
 
 ## Problem 10 - Style the website
 
@@ -152,7 +152,7 @@ Now we will be going to Problem 10. In order to make the site feel like a real C
 
 I asked Claude several prompts on improving the visuals of the website. For instance, I frequently asked can "Can you improve the resolution of this xxx product?"
 
-*Why I asked for this:* The design work only lands if the product photos look right, and they did not. Most of them had come on a black background, which looked like a mistake next to white product cards, and the ones that had been cleaned up still had problems I could see on the page: a crust of dark speckle around the edges, jagged outlines, a few photos that were the wrong shape and left grey stripes down the sides of their card, and one jacket with white holes where its hood should be. So I kept pointing at specific products and asking for them to be fixed. Each round found a different cause rather than the same one, and a few of the fixes had to be thrown out after they turned out to be quietly damaging the clothes - erasing the small print on a t-shirt, or chewing notches out of a sleeve - which is why it took several passes to get right.
+*Why I asked for this:* The design only works if the product photos look right, and they did not: black backgrounds, speckled edges, a few that were the wrong shape, and one jacket with white holes where its hood should be.
 
 ## Problem 11 - Site testing (app check)
 
@@ -166,26 +166,13 @@ Now going to Problem 11. The live site should be tested and documented in output
 
 any bugs
 
-*Why I asked for this:* The page is meant to be proof that the site works, so a
-claim on it that is not actually backed up is worse than no claim at all. This
-caught two. The caption said the stock number came from the database rather than
-the chatbot making it up, but nothing on the page showed that, so Claude tested
-it by asking about a second product and got back the exact pattern of sold-out
-and in-stock sizes, which cannot be guessed. The caption also said the assistant
-"cannot invent" stock, which is stronger than anyone can promise about a
-chatbot, so it now says it looks the numbers up instead.
+*Why I asked for this:* The page is meant to be proof that the site works, so a caption claiming something the screenshot did not actually demonstrate would be worse than no caption at all.
 
 **Follow-up 2**
 
 any other bugs
 
-*Why I asked for this:* The first screenshot did not show what its caption said
-it showed. I had asked the chat about XL, and the answer was right, but the chat
-window was sitting on top of the XL figure on the page behind it - so the one
-number being discussed was hidden. Asking about XS instead fixed it, because
-that part of the page stays visible, and now the question, the answer, the
-price and the stock count are all in the same picture. It proves itself rather
-than asking the grader to take my word for it.
+*Why I asked for this:* Asking once had fixed the wording but not the picture - the first screenshot still did not show the stock figure its caption was discussing, because the chat window was sitting on top of it.
 
 ## Problem 12 - Audit trail, safety, finish harness
 
@@ -199,28 +186,13 @@ Now going to Problem 12. An append-only output/audit_trail.json of agent-loop ac
 
 any bugs
 
-*Why I asked for this:* The whole point of the log is that you can trust it
-later, so it was worth checking it holds up when the shop is busy. It did not.
-Writing 300 records at once kept only 272 of them and left 5 broken blank lines
-- so if two shoppers asked a question at the same moment, one of their records
-could simply disappear. That is the worst way for an audit log to fail, because
-you would never know a line was missing. Claude made the writes take turns, and
-the same test now keeps all 300. This also turned up a separate problem in the
-search that I have left alone for now: asking for a "navy hoodie" returns 82
-products because it matches either word, and only 27 of them are hoodies.
+*Why I asked for this:* The whole point of the log is that you can trust it afterwards, so I wanted to know whether it holds up when two shoppers ask something at the same moment.
 
 **Follow-up 2**
 
 any other bugs
 
-*Why I asked for this:* The log was recording the turns that went fine and
-staying silent on the ones that went wrong. If the provider blocked a message -
-which is what happens when somebody tries to jailbreak the chatbot - nothing was
-written down at all. That is exactly the event you would want a record of, and
-it was invisible. It now records every failed turn with the reason. Asking twice
-was worth it: the first answer I got said the tool logging had been checked, and
-when Claude went to actually prove it, the test it had relied on turned out to
-pass without testing anything.
+*Why I asked for this:* The log was recording the turns that went well and staying silent on the ones that went wrong, which is the opposite of what an audit trail is for.
 
 ## Problem 13 - Push to GitHub and submit the URL
 
