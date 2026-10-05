@@ -1,0 +1,25 @@
+# Backend dependencies. Install into a virtual environment:
+#
+#     python -m venv .venv
+#     .venv\Scripts\python.exe -m pip install -r requirements.txt     (Windows)
+#     .venv/bin/python -m pip install -r requirements.txt             (macOS/Linux)
+#
+# Versions are the ones this was built and tested against.
+
+# Web framework and server. uvicorn[standard] brings in watchfiles, which
+# backend/dev.ps1 uses for a reloader that actually reloads.
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+
+# The agent. pydantic-ai-slim is the package; `import pydantic_ai` is the
+# module. The openai extra supplies the OpenAI-compatible client used to reach
+# gpt-6-luna through Portkey.
+pydantic-ai-slim[openai]==2.52.0
+
+# Reads the .env at the project root. See .env.example.
+python-dotenv==1.2.4
+
+# Used by the image scripts in backend/ (whiten_images.py, derive_colors.py,
+# remove_person.py), which prepared the product photographs. Not needed to
+# serve the site, but needed to re-run that work.
+pillow==12.3.0

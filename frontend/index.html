@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f2340" />
+    <meta
+      name="description"
+      content="Campus Customs - Yale apparel printed in New Haven. Hoodies, crewnecks, quarter-zips and tees for every residential college and team."
+    />
+    <!-- Fraunces for display headings (collegiate, high contrast), Inter for everything else. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>Campus Customs &middot; Yale Apparel</title>
+    <!-- Set the theme before the first paint. React applies it in an effect,
+         which runs after the browser has already drawn, so a visitor who
+         chose dark - or whose system is dark - got a flash of the light page
+         on every load. Must stay in step with ThemeToggle: same key, same
+         fallback to the system setting. -->
+    <script>
+      (function () {
+        try {
+          var key = 'campus-customs-theme'
+          var saved = localStorage.getItem(key)
+          document.documentElement.dataset.theme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+        } catch (e) {
+          /* Private browsing can refuse storage; React still sets it later. */
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

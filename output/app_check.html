@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Campus Customs — Live Site Check</title>
+<style>
+  :root {
+    --navy: #0f2340;
+    --ink: #16202c;
+    --ink-soft: #55616f;
+    --paper: #fffdf9;
+    --shell: #f4f1ea;
+    --line: #e4ded2;
+    --brass-text: #8c6825;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2.5rem 1.25rem 4rem;
+    background: var(--shell);
+    color: var(--ink);
+    font: 16px/1.6 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 880px; margin: 0 auto; }
+  header { margin-bottom: 2.5rem; }
+  h1 { font-size: 2rem; margin: 0 0 .4rem; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-soft); margin: 0; }
+  .eyebrow {
+    font-size: .72rem; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--brass-text); margin: 0 0 .35rem;
+  }
+  section {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+  }
+  h2 { font-size: 1.25rem; margin: 0 0 .75rem; }
+  figure { margin: 0; }
+  img {
+    /* Captures are 799-800px wide; let them sit at native size rather than be
+       stretched to the column width, which softens the text in them. */
+    display: block; width: 100%; max-width: 800px; height: auto;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: #fff;
+  }
+  figcaption { margin-top: .85rem; color: var(--ink); }
+  .check {
+    margin-top: .85rem; padding: .7rem .9rem;
+    background: var(--shell); border-left: 3px solid var(--brass-text);
+    border-radius: 0 6px 6px 0;
+    font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--ink-soft);
+  }
+  footer {
+    margin-top: 2.5rem; padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft); font-size: .9rem;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <p class="eyebrow">Problem 11</p>
+  <h1>Campus Customs — live site check</h1>
+  <p class="sub">
+    Three checks run against the running app (frontend on <code>:5173</code>,
+    FastAPI backend on <code>:8000</code>, agent on <code>gpt-6-luna</code>).
+    Each screenshot below is an unedited capture of the live site.
+  </p>
+</header>
+
+<section>
+  <h2>1. The chat reports real stock and price from the database</h2>
+  <figure>
+    <img src="app_check_images/inventory.png"
+         alt="Chat panel on the Basic Hoodie Big Yale page. The shopper asks how many XS are left and what it costs; the assistant answers that there are 15 XS left and it costs $68, while the page behind shows an XS button reading 15 left and a price of $68." />
+    <figcaption>
+      Asked &ldquo;How many XS are left in this hoodie, and what does it cost?&rdquo;, the
+      assistant answers <strong>15 XS left, $68</strong> &mdash; and the product page behind it
+      shows the same two figures in the same frame: an <strong>XS</strong> button reading
+      <strong>15 left</strong>, and <strong>$68</strong>. The assistant reads both from the
+      database with a tool call rather than from its own memory, which is why they agree.
+    </figcaption>
+    <p class="check">
+      Database row &mdash; basic-hoodie-big-yale: price 68.00 &middot;
+      <strong>XS 15</strong> &middot; S 5 &middot; M 5 &middot; L 8 &middot; XL 2 &middot; XXL 25
+    </p>
+  </figure>
+</section>
+
+<section>
+  <h2>2. A category question makes product cards appear on the page</h2>
+  <figure>
+    <img src="app_check_images/chat_search_cards.png"
+         alt="After the shopper asks what hoodies are available, a band headed From the shop assistant appears on the page with the heading Hoodies, a badge reading 8 of 27, a See all 27 button, and real product cards." />
+    <figcaption>
+      Asking &ldquo;What hoodies do you have?&rdquo; drove the page itself, not just the
+      reply: a <strong>From the shop assistant</strong> band appeared with eight real
+      product cards, a <strong>8 of 27</strong> badge and a <strong>See all 27</strong> link.
+      The 27 is the true number of hoodies in the catalogue, counted server-side rather
+      than claimed by the model.
+    </figcaption>
+    <p class="check">
+      Verified &mdash; GET /api/products?search=hoodie returns 27 products; the band shows 8 of them.
+    </p>
+  </figure>
+</section>
+
+<section>
+  <h2>3. Problem 9 usability feature: filter the catalogue by the size you wear</h2>
+  <figure>
+    <img src="app_check_images/size_filter.png"
+         alt="The Products page with the Hoodies category chip and the XS size chip both selected, and a line reading 21 products in Hoodies in stock in XS above the grid." />
+    <figcaption>
+      The <strong>In stock in</strong> row filters the catalogue to products that actually
+      have a unit in that size, and it combines with the category filter &mdash; here
+      <strong>Hoodies + XS</strong> gives <strong>21 products in Hoodies in stock in XS</strong>,
+      spelled out above the grid. The filter lives in the URL
+      (<code>?size=XS&amp;category=Hoodies</code>), so it survives a refresh and can be shared.
+    </figcaption>
+    <p class="check">
+      Verified &mdash; all products 102 &middot; size=XS 75 &middot; size=XS + category=Hoodies 21
+    </p>
+  </figure>
+</section>
+
+<footer>
+  Screenshots live in <code>app_check_images/</code> and are linked with relative paths, so
+  this page opens correctly straight from the file system. Every number quoted above was
+  re-checked against the SQLite database and the live API at the time of capture; the
+  testing notes are in <code>harness.md</code>.
+</footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------------------
+# Secrets
+# ---------------------------------------------------------------------------
+# The real .env holds the Portkey API key and the session signing secret.
+# .env.example is committed in its place, with placeholders only.
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------------
+# The data pack - deliberately not in this repository
+# ---------------------------------------------------------------------------
+# campus_customs.db is the shop's own database and data/products/ is 102
+# product photographs. Both are supplied separately; see the README for where
+# to put them. Everything under data/ is ignored rather than naming the two
+# paths, so a stray file dropped in there cannot be committed by accident.
+data/
+data.zip
+
+# ---------------------------------------------------------------------------
+# Dependencies and build output - reinstallable, and large
+# ---------------------------------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+.vite/
+
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---------------------------------------------------------------------------
+# Editor and operating system clutter
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
