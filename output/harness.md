@@ -1935,3 +1935,36 @@ grader would see it:
   *"Is the Yale Dad Crewneck in stock in L?"* correctly, appended to its audit
   trail, and returned 25 products for `navy hoodie`, all of them hoodies.
 - The test clone was deleted afterwards, because a real key had been put in it.
+
+## A grader would have seen black backgrounds
+
+The repository has no `data/`, which the assignment requires, so a grader
+unpacks the course `data.zip` instead. That zip holds the photographs exactly as
+they arrived: 75 of the 102 on a black backdrop, between 450 and 900 pixels,
+several not square. All 102 differ from what the site actually serves.
+
+The white-backed 1200px images only exist because `whiten_images.py` wrote them
+into `data/products/`, and that folder is ignored by git - correctly, since it
+is a build artefact. But the README never said to run the script. Anyone cloning
+the repository and following it would have got a shop where every product sits
+on black, which is the exact fault Problem 10 was about, and none of that work
+would have been visible.
+
+It is now step 3 of the setup, before the frontend install. Verified by cloning
+the published repository into a clean directory, unpacking the zip, running the
+script and serving it: the photograph that arrives 457px on black is served
+1200px on white, and all 102 come out square.
+
+The database needs no such step - the copy inside the zip already matches the
+one in use, bar the two accounts created while testing Problem 4.
+
+## The README promised the wrong Node version
+
+It said Node 18 or newer. The lockfile disagrees: Vite 8.3.2,
+`@vitejs/plugin-react`, `rolldown`, `oxlint` and `react-router` all require
+`^20.19.0 || >=22.12.0`. On Node 18 the install fails, so a grader following
+the instructions exactly would have been stopped at the frontend.
+
+The README now states 20.19 or newer and says to check with `node --version`,
+and `package.json` carries an `engines` field so npm reports a clear version
+error rather than a confusing build failure.

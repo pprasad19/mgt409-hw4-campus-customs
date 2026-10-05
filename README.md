@@ -12,8 +12,9 @@ are left in a hoodie and it reads the inventory table and tells you the number.
 ## Before you start: place the data pack
 
 **This repository deliberately contains no data.** The database and the product
-photographs are supplied separately, and `.gitignore` keeps them out. Unpack the
-data pack into the project root so it looks like this:
+photographs are the course-supplied `data.zip` for Homework 4; `.gitignore` keeps
+them out of git, as the assignment requires. Unpack that zip into the project
+root so it looks like this:
 
 ```
 hw4/
@@ -27,6 +28,9 @@ hw4/
 
 Nothing works without it: the backend reads `data/campus_customs.db` on every
 request and serves `data/products/` as the product images.
+
+**Keep `data.zip` itself in the project root too.** Step 3 below reads from it,
+and it is the only copy of the untouched originals.
 
 ## Setup
 
@@ -53,9 +57,29 @@ python -m venv .venv
 On macOS or Linux use `.venv/bin/python` in place of `.venv\Scripts\python.exe`
 throughout.
 
-### 3. Frontend dependencies
+### 3. Prepare the photographs
 
-Node 18 or newer (built on 24).
+**Not optional if you want to see the shop as designed.** The zip holds the
+photographs as they arrived: 75 of the 102 on a black backdrop, between 450 and
+900 pixels, several not square. Against white product cards a black backdrop
+reads as a mistake, so Problem 10 repaints it white, squares every frame and
+smooths the cut-out edges. A script does that, and its output is a build
+artefact rather than source, so it is not committed:
+
+```bash
+.venv\Scripts\python.exe backend\whiten_images.py
+```
+
+About a minute. It reads only from `data.zip` and overwrites `data/products/`
+with 102 white-backed 1200px images, so it is safe to re-run. Skip it and the
+shop still works — but every product will carry the black background that the
+design problem was about.
+
+### 4. Frontend dependencies
+
+**Node 20.19 or newer** (or 22.12+). Built on 24. Vite 8, the React plugin and
+react-router all require that version, so on Node 18 the install fails — check
+with `node --version` first.
 
 ```bash
 cd frontend
