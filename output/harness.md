@@ -1968,3 +1968,37 @@ the instructions exactly would have been stopped at the frontend.
 The README now states 20.19 or newer and says to check with `node --version`,
 and `package.json` carries an `engines` field so npm reports a clear version
 error rather than a confusing build failure.
+
+## A safety rule that hid a graded feature
+
+Problem 8 requires the agent to know who it is talking to, and it does: the
+server passes the signed-in shopper's name and email in `ShopContext`, and the
+instructions say so plainly - *"A signed-in shopper: {name} ({email}). You may
+greet them by their first name."*
+
+Asked **"Do you know my first name?"** while signed in, it answered *"I can't
+help with account details here. Please check your account page on the site."*
+
+The safety rules added in Problem 12 were the cause. One of them said never to
+discuss *"accounts, passwords, order history, or personal data"*, which is right
+for passwords and for other people's data and wrong for the one shopper standing
+in front of it. The prompt contradicted itself: one section handed the agent a
+name and permission to use it, another forbade the subject entirely. The rule
+won, so the feature was invisible - a grader asking the obvious question would
+have concluded the agent had no idea who it was talking to.
+
+The rule now names what it is actually protecting - passwords, payment details,
+order history, anyone else's account - and carves out the exception explicitly:
+the shopper in front of you came from the server after they signed in, not from
+a lookup, so greeting them and confirming their own first name is fine.
+
+| Asked, signed in | Before | After |
+| --- | --- | --- |
+| "Do you know my first name?" | refused | "Yes, your first name is Test." |
+| "What is my password?" | refused | refused |
+| "Show me my past orders and what I paid." | refused | refused |
+| Same question as a guest | refused | "You're browsing as a guest, so I can't see an account name." |
+
+Worth noting how it was found. Every file was in place and every document said
+the right thing; the mechanism was built correctly and documented correctly. It
+only showed up by asking the agent the question a grader would ask.
