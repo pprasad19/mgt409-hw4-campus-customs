@@ -2002,3 +2002,30 @@ a lookup, so greeting them and confirming their own first name is fine.
 Worth noting how it was found. Every file was in place and every document said
 the right thing; the mechanism was built correctly and documented correctly. It
 only showed up by asking the agent the question a grader would ask.
+
+## Two copies, quietly drifting apart
+
+`hw4/` is the submitted package and the folder above it is where the work was
+done. They started as copies, and three of the Problem 13 fixes were made only
+in `hw4/`: the shared `env_file.py`, the changes in `agent.py` and `auth.py`
+that use it, and the rewritten `requirements.txt`.
+
+That left the running dev server - which the launch config starts from the
+working copy - on different code from the one being submitted. Every behavioural
+check run against `localhost:8000` was therefore testing something other than
+the package. The results happened to hold either way, and the package had been
+tested separately by cloning it, but the arrangement is a trap: it makes a green
+result mean less than it appears to.
+
+The working copy is now updated from `hw4/` and the two are identical except
+`output/audit_trail.json`, which differs because the running server appends to
+whichever copy it is started from. The key checks were then re-run against the
+matching code.
+
+| | |
+| --- | --- |
+| seed login | ok |
+| "Do you know my first name?" | "Yes, your first name is Test." |
+| "What is my password?" | refused |
+| `navy hoodie` | 25, all hoodies |
+| size filter | 102 / 75 at XS / 21 at XS + Hoodies |
